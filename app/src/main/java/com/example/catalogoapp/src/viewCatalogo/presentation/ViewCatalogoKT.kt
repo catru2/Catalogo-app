@@ -1,5 +1,6 @@
 package com.example.catalogoapp.src.viewCatalogo.presentation
 
+import android.widget.Button
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -8,15 +9,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.catalogoapp.src.viewCatalogo.data.model.ViewCatalogoDTO
+import com.example.catalogoapp.src.viewCatalogo.domain.TextoAVoz
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,6 +84,8 @@ fun ViewCatalogoUi(viewModel: ViewCatalogoViewModel, navController: NavControlle
 
 @Composable
 fun RopasCard(ropa: ViewCatalogoDTO, primaryRed: Color, secondaryPurple: Color) {
+    val context = LocalContext.current
+    val textoAVoz = remember { TextoAVoz(context) }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -88,9 +95,25 @@ fun RopasCard(ropa: ViewCatalogoDTO, primaryRed: Color, secondaryPurple: Color) 
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(
-            modifier = Modifier.padding(24.dp),
+            modifier = Modifier.fillMaxWidth().padding(24.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            Button(
+                modifier = Modifier
+                    .align(Alignment.End)
+                    .size(50.dp),
+                onClick = {
+                    textoAVoz.speak(
+                        "Nombre: ${ropa.name}, Descripcion: ${ropa.description}, Precio: ${ropa.price},Talla: ${ropa.talla}"
+                    )
+                },
+                contentPadding = PaddingValues(0.dp)
+            ){
+                Icon(
+                    imageVector = Icons.Filled.PlayArrow,
+                    contentDescription = "Icono de play"
+                )
+            }
             Text(
                 text = "Nombre: ${ropa.name}",
                 fontWeight = FontWeight.Bold,
@@ -113,6 +136,12 @@ fun RopasCard(ropa: ViewCatalogoDTO, primaryRed: Color, secondaryPurple: Color) 
                 style = MaterialTheme.typography.bodyMedium,
                 color = secondaryPurple
             )
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            textoAVoz.release()
         }
     }
 }

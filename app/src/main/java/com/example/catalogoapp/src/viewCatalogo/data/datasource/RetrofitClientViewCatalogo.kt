@@ -5,7 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClientViewCatalogo{
-    private const val BASE_URL = "http://192.168.100.149:3000"
+    private const val BASE_URL = "http://192.168.28.120:3000"
 
     val api: ViewCatalogoService by lazy {
         Retrofit.Builder()
